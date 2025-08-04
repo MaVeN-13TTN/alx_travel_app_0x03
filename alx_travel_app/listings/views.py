@@ -24,7 +24,7 @@ from chapa import Chapa
 from django.conf import settings
 import uuid
 from django.shortcuts import get_object_or_404
-from .tasks import send_payment_confirmation_email
+from .tasks import send_payment_confirmation_email, send_booking_confirmation_email
 
 
 class InitiatePaymentView(APIView):
@@ -201,8 +201,11 @@ class BookingViewSet(viewsets.ModelViewSet):
         return Booking.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        """Set the user to the current user when creating a booking"""
-        serializer.save(user=self.request.user)
+        """Set the user to the current user when creating a booking and send confirmation email"""
+        booking = serializer.save(user=self.request.user)
+
+        # Trigger Celery task to send booking confirmation email
+        send_booking_confirmation_email.delay(booking.id)
 
     @action(detail=False, methods=["get"])
     def my_bookings(self, request):

@@ -23,6 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(
     # Set casting and default values only for non-sensitive settings
     DEBUG=(bool, False),  # Default to False for security
+    EMAIL_HOST=(str, "smtp.gmail.com"),
+    EMAIL_PORT=(int, 587),
+    EMAIL_USE_TLS=(bool, True),
+    EMAIL_HOST_USER=(str, ""),
+    EMAIL_HOST_PASSWORD=(str, ""),
+    DEFAULT_FROM_EMAIL=(str, "noreply@alxtravel.com"),
 )
 # Read .env file at the project root (three levels up from this file to get to the main project root)
 PROJECT_ROOT = BASE_DIR.parent
@@ -194,3 +200,14 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
+
+# Email settings
+# For development, use console backend to see emails in console
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_USE_TLS = env("EMAIL_USE_TLS")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
